@@ -8,12 +8,31 @@ AM_CFLAGS = -Wundef \
         -g -O0 \
         -fno-inline \
         -fno-short-enums \
-        -fpic \
-        -I $(top_srcdir)/include
+        -fpic
+
+if BUILDSYSTEM_OPENWRT
+
+AM_CFLAGS += -I ./include
 
 h_sources = ./include/tinyalsa/asoundlib.h \
             ./include/tinyalsa/mixer_plugin.h \
             ./include/tinyalsa/pcm_plugin.h
+
+c_sources = ./mixer.c \
+            ./pcm.c \
+            ./mixer_hw.c \
+            ./mixer_plugin.c \
+            ./pcm_hw.c \
+            ./pcm_plugin.c \
+            ./snd_utils.c
+
+else
+
+AM_CFLAGS += -I $(top_srcdir)/include
+
+h_sources = ${top_srcdir}/include/tinyalsa/asoundlib.h \
+            ${top_srcdir}/include/tinyalsa/mixer_plugin.h \
+            ${top_srcdir}/include/tinyalsa/pcm_plugin.h
 
 c_sources = ${top_srcdir}/mixer.c \
             ${top_srcdir}/pcm.c \
@@ -22,6 +41,8 @@ c_sources = ${top_srcdir}/mixer.c \
             ${top_srcdir}/pcm_hw.c \
             ${top_srcdir}/pcm_plugin.c \
             ${top_srcdir}/snd_utils.c
+endif
+
 
 library_includedir = $(includedir)/tinyalsa/
 library_include_HEADERS = $(h_sources)
@@ -37,7 +58,7 @@ libtinyalsa_la_LDFLAGS = -shared -avoid-version
 
 bin_PROGRAMS = qtitinyplay
 
-qtitinyplay_SOURCES := ${top_srcdir}/tinyplay.c
+qtitinyplay_SOURCES := ./tinyplay.c
 qtitinyplay_la_LIBADD = $(GLIB_LIBS) -llog -lcutils
 qtitinyplay_la_CFLAGS := $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
 qtitinyplay_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
@@ -46,7 +67,7 @@ qtitinyplay_la_LDFLAGS = -shared -avoid-version
 
 bin_PROGRAMS += qtitinycap
 
-qtitinycap_SOURCES := ${top_srcdir}/tinycap.c
+qtitinycap_SOURCES := ./tinycap.c
 qtitinycap_la_LIBADD = $(GLIB_LIBS) -llog -lcutils
 qtitinycap_CFLAGS := $(AM_CFLAGS) $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
 qtitinycap_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
@@ -55,7 +76,7 @@ qtitinycap_la_LDFLAGS = -shared -avoid-version
 
 bin_PROGRAMS += qtitinymix
 
-qtitinymix_SOURCES := ${top_srcdir}/tinymix.c
+qtitinymix_SOURCES := ./tinymix.c
 qtitinymix_la_LIBADD = $(GLIB_LIBS) -llog -lcutils
 qtitinymix_la_CFLAGS := $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
 qtitinymix_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
@@ -64,7 +85,7 @@ qtitinymix_la_LDFLAGS = -shared -avoid-version
 
 bin_PROGRAMS += qtitinyhostless
 
-qtitinyhostless_SOURCES := ${top_srcdir}/tinyhostless.c
+qtitinyhostless_SOURCES := ./tinyhostless.c
 qtitinyhostless_la_LIBADD = $(GLIB_LIBS) -llog -lcutils
 qtitinyhostless_la_CFLAGS := $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
 qtitinyhostless_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
@@ -73,7 +94,7 @@ qtitinyhostless_la_LDFLAGS = -shared -avoid-version
 
 bin_PROGRAMS += qtitinypcminfo
 
-qtitinypcminfo_SOURCES := ${top_srcdir}/tinypcminfo.c
+qtitinypcminfo_SOURCES := ./tinypcminfo.c
 qtitinypcminfo_la_LIBADD = $(GLIB_LIBS) -llog -lcutils
 qtitinypcminfo_la_CFLAGS := $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
 qtitinypcminfo_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
