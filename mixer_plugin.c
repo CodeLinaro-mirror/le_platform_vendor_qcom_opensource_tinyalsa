@@ -46,6 +46,7 @@
 #include <linux/ioctl.h>
 #include <sound/asound.h>
 
+#include <tinyalsa/asoundlib.h>
 #include <tinyalsa/mixer_plugin.h>
 #include "snd_utils.h"
 
@@ -144,7 +145,7 @@ static ssize_t mixer_plug_read_event(void *data, struct snd_ctl_event *ev, size_
     eventfd_t evfd;
     ssize_t result = 0;
 
-    result = plugin->ops->read_event(plugin, ev, size);
+    result = plugin->ops->read_event(plugin, (struct ctl_event *)ev, size);
 
     if (result > 0) {
         plugin->event_cnt -=  result / sizeof(struct snd_ctl_event);

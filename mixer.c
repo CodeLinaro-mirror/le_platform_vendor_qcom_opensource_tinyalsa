@@ -1,6 +1,7 @@
 /* mixer.c
 **
 ** Copyright 2011, The Android Open Source Project
+** Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are met:
@@ -178,9 +179,8 @@ static int mixer_grp_open(struct mixer *mixer,
         ctl->mixer = mixer;
         ctl->info = grp->elem_info + n;
         ctl->info->id.numid = eid[n].numid;
-        strncpy((char *)ctl->info->id.name, (char *)eid[n].name,
+        strlcpy((char *)ctl->info->id.name, (char *)eid[n].name,
                 SNDRV_CTL_ELEM_ID_NAME_MAXLEN);
-        ctl->info->id.name[SNDRV_CTL_ELEM_ID_NAME_MAXLEN - 1] = 0;
     }
 
     grp->data = data;
@@ -961,11 +961,11 @@ int mixer_consume_event(struct mixer *mixer)
  * so that further events can be alerted.
  *
  * @param mixer A mixer handle.
- * @param ev snd_ctl_event pointer where event needs to be read
+ * @param ev ctl_event pointer where event needs to be read
  * @returns 0 on success.  -errno on failure.
  * @ingroup libtinyalsa-mixer
  */
-int mixer_read_event(struct mixer *mixer, struct snd_ctl_event *ev)
+int mixer_read_event(struct mixer *mixer, struct ctl_event *ev)
 {
     struct mixer_ctl_group *grp;
     ssize_t count = 0;
@@ -974,7 +974,7 @@ int mixer_read_event(struct mixer *mixer, struct snd_ctl_event *ev)
         grp = mixer->hw_grp;
         if (grp->event_cnt) {
             grp->event_cnt--;
-            count = grp->ops->read_event(grp->data, ev, sizeof(*ev));
+            count = grp->ops->read_event(grp->data, (struct snd_ctl_event *)ev, sizeof(*ev));
             return (count >= 0) ? 0 : -errno;
         }
     }
@@ -983,7 +983,7 @@ int mixer_read_event(struct mixer *mixer, struct snd_ctl_event *ev)
         grp = mixer->virt_grp;
         if (grp->event_cnt) {
             grp->event_cnt--;
-            count = grp->ops->read_event(grp->data, ev, sizeof(*ev));
+            count = grp->ops->read_event(grp->data, (struct snd_ctl_event *)ev, sizeof(*ev));
             return (count >= 0) ? 0 : -errno;
         }
     }

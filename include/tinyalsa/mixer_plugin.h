@@ -48,11 +48,11 @@ struct mixer_plugin_ops {
     int (*subscribe_events) (struct mixer_plugin *plugin,
                              event_callback event_cb);
     ssize_t (*read_event) (struct mixer_plugin *plugin,
-                           struct snd_ctl_event *ev, size_t size);
+                           struct ctl_event *ev, size_t size);
 };
 
 struct snd_control {
-    snd_ctl_elem_iface_t iface;
+    ctl_elem_iface_t iface;
     unsigned int access;
     const char *name;
     snd_ctl_elem_type_t type;

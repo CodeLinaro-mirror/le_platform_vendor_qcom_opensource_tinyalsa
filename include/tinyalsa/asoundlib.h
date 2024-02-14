@@ -31,7 +31,6 @@
 
 #include <sys/time.h>
 #include <stddef.h>
-#include <sound/asound.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -152,6 +151,30 @@ enum mixer_ctl_type {
     MIXER_CTL_TYPE_UNKNOWN,
 
     MIXER_CTL_TYPE_MAX,
+};
+
+#define CTL_ELEM_ID_NAME_MAXLEN 44
+
+typedef int ctl_elem_iface_t;
+
+struct ctl_elem_id {
+  unsigned int numid;
+  ctl_elem_iface_t iface;
+  unsigned int device;
+  unsigned int subdevice;
+  unsigned char name[CTL_ELEM_ID_NAME_MAXLEN];
+  unsigned int index;
+};
+
+struct ctl_event {
+  int type;
+  union {
+    struct {
+      unsigned int mask;
+      struct ctl_elem_id id;
+    } elem;
+    unsigned char data8[60];
+  } data;
 };
 
 /* Open and close a stream */
@@ -318,7 +341,7 @@ int mixer_ctl_get_range_max(struct mixer_ctl *ctl);
 int mixer_subscribe_events(struct mixer *mixer, int subscribe);
 int mixer_wait_event(struct mixer *mixer, int timeout);
 int mixer_consume_event(struct mixer *mixer);
-int mixer_read_event(struct mixer *mixer, struct snd_ctl_event *ev);
+int mixer_read_event(struct mixer *mixer, struct ctl_event *ev);
 
 #if defined(__cplusplus)
 }  /* extern "C" */
