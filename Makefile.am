@@ -84,6 +84,15 @@ qtitinymix_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
 qtitinymix_LDADD = libtinyalsa.la $(GLIB_LIBS) -ldl
 qtitinymix_la_LDFLAGS = -shared -avoid-version
 
+bin_PROGRAMS += tinymix
+
+tinymix_SOURCES := ./tinymix.c
+tinymix_la_LIBADD = $(GLIB_LIBS)
+tinymix_la_CFLAGS := $(GLIB_CFLAGS) -Dstrlcpy=g_strlcpy -Dstrlcat=g_strlcat -include glib.h
+tinymix_la_CFLAGS += -D__unused=__attribute__\(\(__unused__\)\)
+tinymix_LDADD = libtinyalsa.la $(GLIB_LIBS) -ldl
+tinymix_la_LDFLAGS = -shared -avoid-version
+
 bin_PROGRAMS += qtitinyhostless
 
 qtitinyhostless_SOURCES := ./tinyhostless.c
